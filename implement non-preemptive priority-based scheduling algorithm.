@@ -1,0 +1,59 @@
+# Non-Preemptive Priority Scheduling Algorithm
+# Function to find waiting time for all processes
+def find_waiting_time(processes, n):
+    # Sort processes based on priority and arrival time
+    processes.sort(key=lambda x: (x[2], x[1]))  # (priority, arrival)
+    
+    waiting_time = [0] * n
+    start_time = [0] * n
+    completion_time = [0] * n
+    
+    start_time[0] = processes[0][1]
+    completion_time[0] = start_time[0] + processes[0][3]
+    waiting_time[0] = start_time[0] - processes[0][1]
+    
+    for i in range(1, n):
+        start_time[i] = max(processes[i][1], completion_time[i-1])
+        completion_time[i] = start_time[i] + processes[i][3]
+        waiting_time[i] = start_time[i] - processes[i][1]
+    
+    return waiting_time, completion_time
+
+
+# Function to calculate turnaround time
+def find_turnaround_time(processes, waiting_time):
+    turnaround_time = []
+    for i in range(len(processes)):
+        turnaround_time.append(processes[i][3] + waiting_time[i])
+    return turnaround_time
+
+
+# Function to implement Non-preemptive Priority Scheduling
+def priority_scheduling(processes):
+    n = len(processes)
+    
+    waiting_time, completion_time = find_waiting_time(processes, n)
+    turnaround_time = find_turnaround_time(processes, waiting_time)
+    
+    total_wt = sum(waiting_time)
+    total_tat = sum(turnaround_time)
+    
+    print("\nProcess\tArrival\tPriority\tBurst\tWaiting\tTurnaround\tCompletion")
+    for i in range(n):
+        print(f"P{processes[i][0]}\t{processes[i][1]}\t{processes[i][2]}\t\t{processes[i][3]}\t{waiting_time[i]}\t{turnaround_time[i]}\t\t{completion_time[i]}")
+    
+    print(f"\nAverage Waiting Time: {total_wt/n:.2f}")
+    print(f"Average Turnaround Time: {total_tat/n:.2f}")
+
+# Driver code
+if __name__ == "__main__":
+    # Each process = [Process_ID, Arrival_Time, Priority, Burst_Time]
+    processes = [
+        [1, 0, 2, 5],
+        [2, 1, 0, 3],
+        [3, 2, 1, 8],
+        [4, 3, 3, 6]
+    ]
+    
+    priority_scheduling(processes)
+
