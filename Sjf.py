@@ -1,56 +1,80 @@
-# Function to calculate waiting time
-def find_waiting_time(processes, n, bt, wt, at):
-    wt[0] = 0  # First process has no waiting time
-    
-    for i in range(1, n):
-        # Waiting time = previous burst + previous waiting - gap in arrivals
-        wt[i] = bt[i-1] + wt[i-1] - (at[i] - at[i-1])
-        
-        # If CPU was idle, waiting time becomes zero
-        if wt[i] < 0:
-            wt[i] = 0
+# Write a program to implement Shortest Job First (SJF) scheduling algorithm. 
 
-# Function to calculate turnaround time
-def find_turnaround_time(processes, n, bt, wt, tat):
+def find_waiting_time(processes, n, at, bt, wt):
+    completed = 0
+    current_time = 0
+    is_done = [False] * n
+
+    while completed != n:
+        # Find process with minimum burst time among available ones
+        min_bt = float('inf')
+        shortest = -1
+
+        for i in range(n):
+            if at[i] <= current_time and not is_done[i] and bt[i] < min_bt:
+                min_bt = bt[i]
+                shortest = i
+
+        # If no process has arrived yet
+        if shortest == -1:
+            current_time += 1
+            continue
+
+        # Calculate waiting time
+        wt[shortest] = current_time - at[shortest]
+
+        # Update current time
+        current_time += bt[shortest]
+
+        # Mark process as completed
+        is_done[shortest] = True
+        completed += 1
+
+
+def find_turnaround_time(n, bt, wt, tat):
     for i in range(n):
         tat[i] = bt[i] + wt[i]
 
-# Function to calculate average time and print results
-def find_avg_time(processes, n, bt, at):
+
+def sjf_scheduling(processes, n, at, bt):
     wt = [0] * n
     tat = [0] * n
-    
-    # Function calls
-    find_waiting_time(processes, n, bt, wt, at)
-    find_turnaround_time(processes, n, bt, wt, tat)
-    
-    print("Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time") 
+
+    # Find waiting times
+    find_waiting_time(processes, n, at, bt, wt)
+
+    # Find turnaround times
+    find_turnaround_time(n, bt, wt, tat)
+
+    # Print results
+    print("\nProcess\tArrival\tBurst\tWaiting\tTurnaround")
     total_wt = 0
     total_tat = 0
-    
+
     for i in range(n):
         total_wt += wt[i]
         total_tat += tat[i]
-        print(f"{processes[i]}\t\t{at[i]}\t\t{bt[i]}\t\t{wt[i]}\t\t{tat[i]}")
-    
-    print(f"\nAverage waiting time = {total_wt / n:.2f}")
-    print(f"Average turnaround time = {total_tat / n:.2f}")
+        print(f"{processes[i]}\t{at[i]}\t{bt[i]}\t{wt[i]}\t{tat[i]}")
 
-# Driver code
-if __name__ == "__main__":
-    n = int(input("Enter number of processes: "))
-    processes = []
-    arrival_time = []
-    burst_time = []
-    
-    for i in range(n):
-        processes.append(f"P{i+1}")
-        at = int(input(f"Enter arrival time of process {i+1}: "))
-        bt = int(input(f"Enter burst time of process {i+1}: "))
-        arrival_time.append(at)
-        burst_time.append(bt)
-    
-    # Sort processes by arrival time
-    processes, arrival_time, burst_time = zip(*sorted(
-        zip(processes, arrival_time, burst_time), key=lambda x: x[1]
-    ))
+    print(f"\nAverage Waiting Time: {total_wt / n:.2f}")
+    print(f"Average Turnaround Time: {total_tat / n:.2f}")
+
+
+# ------------------ DRIVER CODE ------------------
+
+n = int(input("Enter number of processes: "))
+
+processes = []
+arrival_time = []
+burst_time = []
+
+for i in range(n):
+    processes.append(f"P{i+1}")
+    arrival_time.append(int(input(f"Enter arrival time of P{i+1}: ")))
+    burst_time.append(int(input(f"Enter burst time of P{i+1}: ")))
+
+sjf_scheduling(processes, n, arrival_time, burst_time)
+
+
+
+
