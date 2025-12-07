@@ -1,3 +1,9 @@
+/*
+Write a program to report behaviour of Linux kernel including information on 
+configured memory, amount of free and used memory. (Memory information) 
+
+*/
+
 #include<iostream>
 #include<sys/utsname.h>
 #include<sys/sysinfo.h>
@@ -16,4 +22,5 @@ int main(){
     }
     return 0;
 }
+
 
