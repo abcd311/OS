@@ -1,18 +1,30 @@
-#include<iostream>
-#include<sys/utsname.h>
-#include<sys/sysinfo.h>
-using namespace std;
+/*
+Write a program to report behaviour of Linux kernel including kernel version, CPU 
+type andCPU information. 
+*/
 
-int main(){
+#include <iostream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/utsname.h>
+using namespace std;
+int main()
+{
+    int i=0;
     struct utsname s1;
-    int i = uname(&s1);
-    if(i==0){
-        cout<<"Operating system name : "<<s1.sysname<<endl;
-        cout<<"Version name : "<<s1.version<<endl;
-        cout<<"Machine name : "<<s1.machine<<endl;
-        // system("grep-m1 'model name'/proc/CPUinfo");
-    }else{
-        cout<<"error"<<endl;
+    i=uname(&s1);
+    
+    if(i==0)
+    {
+        cout<<"\n The name of System:"<< "system" << s1.sysname;
+        cout<<"\n The version: " << s1.version<<endl;
+        cout<<"\n The Machine: " << s1.machine<<endl;
+        cout<< system("grep 'model name'/proc/cpuinfo");
+    }
+    
+    else
+    {
+        cout<<("Error");
     }
     return 0;
 }
